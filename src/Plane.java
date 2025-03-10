@@ -3,8 +3,8 @@ import java.awt.image.BufferedImage;
 
 public class Plane {
     private int x, y;
-    private int velocityX; // Added horizontal velocity
-    private int velocityY;
+    private double velocityX; // Changed to double for smoother movement
+    private double velocityY; // Changed to double for smoother movement
     private BufferedImage image;
     private boolean exploding;
 
@@ -51,11 +51,11 @@ public class Plane {
         this.y = y;
     }
 
-    public int getVelocityX() {
+    public double getVelocityX() {
         return velocityX;
     }
 
-    public void setVelocityX(int velocityX) {
+    public void setVelocityX(double velocityX) {
         this.velocityX = velocityX;
     }
 
@@ -68,7 +68,11 @@ public class Plane {
         return image.getHeight();
     }
 
-    public void setVelocityY(int velocityY) {
+    public double getVelocityY() {
+        return velocityY;
+    }
+
+    public void setVelocityY(double velocityY) {
         this.velocityY = velocityY;
     }
 

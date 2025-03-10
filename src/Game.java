@@ -34,6 +34,13 @@ public class Game extends JPanel implements ActionListener, KeyListener, MouseMo
     // Mouse control
     private boolean mouseControlEnabled = true; // Added option to enable/disable mouse
 
+    // Plane auto-movement settings
+    private int planeAutoSpeedX = 2;  // Adjust for desired horizontal speed
+    private int planeAutoSpeedY = 0; //Initially no vertical movement
+    private int maxVelocity = 5; // Maximum velocity in any direction
+    private double acceleration = 0.2; // Acceleration factor
+    private double deceleration = 0.1; // Deceleration factor
+
     public Game() {
         // Initialize panel
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -165,20 +172,51 @@ public class Game extends JPanel implements ActionListener, KeyListener, MouseMo
     }
 
     private void updatePlane() {
+        // Apply user control velocity on top of auto movement
+
         // Update plane position based on its velocity
-        plane.update();
+        plane.setX((int) (plane.getX() + plane.getVelocityX()));
+        plane.setY((int) (plane.getY() + plane.getVelocityY()));
+
+        // Decelerate when no key is pressed
+        if (plane.getVelocityX() > 0) {
+            plane.setVelocityX(Math.max(0, plane.getVelocityX() - deceleration));
+        } else if (plane.getVelocityX() < 0) {
+            plane.setVelocityX(Math.min(0, plane.getVelocityX() + deceleration));
+        }
+
+        if (plane.getVelocityY() > 0) {
+            plane.setVelocityY(Math.max(0, plane.getVelocityY() - deceleration));
+        } else if (plane.getVelocityY() < 0) {
+            plane.setVelocityY(Math.min(0, plane.getVelocityY() + deceleration));
+        }
+
 
         // Keep plane within screen bounds
         if (plane.getY() < 0) {
             plane.setY(0);
+            plane.setVelocityY(0); // Stop further movement in that direction
         } else if (plane.getY() > HEIGHT - plane.getHeight()) {
             plane.setY(HEIGHT - plane.getHeight());
+            plane.setVelocityY(0); // Stop further movement in that direction
         }
         if (plane.getX() < 0) {
             plane.setX(0);
+            plane.setVelocityX(0); // Stop further movement in that direction
         } else if (plane.getX() > WIDTH - plane.getWidth()) {
             plane.setX(WIDTH - plane.getWidth());
+            plane.setVelocityX(0); // Stop further movement in that direction
         }
+
+        // Apply auto-movement last for consistent behavior
+        plane.setX(plane.getX() + planeAutoSpeedX);  // Move right automatically
+
+        // Check if the plane reached right edge, if so, reset the position
+        if (plane.getX() > WIDTH) {
+            plane.setX(0); //reset position to left
+            plane.setY(HEIGHT / 2); // reset the plane vertical position
+        }
+
     }
 
     private void updateBullets() {
@@ -303,13 +341,13 @@ public class Game extends JPanel implements ActionListener, KeyListener, MouseMo
 
             if(!mouseControlEnabled){ //only moves if not mouse control
                 if (key == KeyEvent.VK_UP) {
-                    plane.setVelocityY(-5);
+                    plane.setVelocityY(Math.max(plane.getVelocityY() - acceleration, -maxVelocity)); // increase velocity up
                 } else if (key == KeyEvent.VK_DOWN) {
-                    plane.setVelocityY(5);
+                    plane.setVelocityY(Math.min(plane.getVelocityY() + acceleration, maxVelocity)); // increase velocity down
                 } else if (key == KeyEvent.VK_LEFT) {
-                    plane.setVelocityX(-5);
+                    plane.setVelocityX(Math.max(plane.getVelocityX() - acceleration, -maxVelocity)); // increase velocity left
                 } else if (key == KeyEvent.VK_RIGHT) {
-                    plane.setVelocityX(5);
+                    plane.setVelocityX(Math.min(plane.getVelocityX() + acceleration, maxVelocity)); // increase velocity right
                 }
             }
 
@@ -322,13 +360,7 @@ public class Game extends JPanel implements ActionListener, KeyListener, MouseMo
         int key = e.getKeyCode();
 
         if(!mouseControlEnabled){
-            // Stop plane movement when keys are released
-            if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
-                plane.setVelocityY(0);
-            }
-            if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT) {
-                plane.setVelocityX(0);
-            }
+            // Gradually slow down the plane when keys are released, handled in updatePlane now
         }
 
     }
@@ -341,20 +373,22 @@ public class Game extends JPanel implements ActionListener, KeyListener, MouseMo
     @Override
     public void mouseMoved(MouseEvent e) {
         if (mouseControlEnabled && !gameOver) {
-            plane.setY(e.getY() - plane.getHeight() / 2); // center the plane on the mouse y
-            plane.setX(e.getX() - plane.getWidth() / 2);   // center the plane on the mouse x
+            // Calculate the desired velocity based on mouse position
+            int targetY = e.getY() - plane.getHeight() / 2;
+            int targetX = e.getX() - plane.getWidth() / 2;
 
-            // Keep plane within screen bounds - same as updatePlane()
-            if (plane.getY() < 0) {
-                plane.setY(0);
-            } else if (plane.getY() > HEIGHT - plane.getHeight()) {
-                plane.setY(HEIGHT - plane.getHeight());
-            }
-            if (plane.getX() < 0) {
-                plane.setX(0);
-            } else if (plane.getX() > WIDTH - plane.getWidth()) {
-                plane.setX(WIDTH - plane.getWidth());
-            }
+            // Smoothly adjust the plane's position towards the target
+            double diffY = targetY - plane.getY();
+            double diffX = targetX - plane.getX();
+
+            // Apply acceleration towards the target position
+            plane.setVelocityY(diffY * acceleration);
+            plane.setVelocityX(diffX * acceleration);
+
+            // Limit the velocity to prevent excessive speed
+            plane.setVelocityY(Math.max(Math.min(plane.getVelocityY(), maxVelocity), -maxVelocity));
+            plane.setVelocityX(Math.max(Math.min(plane.getVelocityX(), maxVelocity), -maxVelocity));
+
         }
     }
 
