@@ -59,8 +59,10 @@ Java-Plane-Bullet-Game/
 │   └── enemy.png
 
 
-📝 License
+## 📝 License
+
 This project is licensed under the MIT License - feel free to use and modify!
 
-🙌 Credits
+## 🙌 Credits
+
 Developed by Aline CROIRE
