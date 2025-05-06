@@ -10,7 +10,7 @@ public class Bullet {
         this.x = x;
         this.y = y;
         this.image = image;
-        this.velocityX = -8; // Bullets move from right to left
+        this.velocityX = -8; // Default bullet speed, can be modified
     }
 
     public void update() {
@@ -28,7 +28,7 @@ public class Bullet {
         return new Rectangle(x, y, image.getWidth(), image.getHeight());
     }
 
-    // Getters
+    // Getters and setters
     public int getX() {
         return x;
     }
@@ -43,5 +43,13 @@ public class Bullet {
 
     public int getHeight() {
         return image.getHeight();
+    }
+
+    public int getVelocityX() {
+        return velocityX;
+    }
+
+    public void setVelocityX(int velocityX) {
+        this.velocityX = velocityX;
     }
 }
