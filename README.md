@@ -2,7 +2,8 @@
 
 A simple 2D shooting game built using **Java AWT/Swing**. Control a fighter plane, shoot down enemies, and avoid collisions!
 
-![Gameplay Screenshot](https://github.com/Aline-CROIRE/Java-Plane-Bullet-Game/raw/main/images/preview.png)
+![Game](https://github.com/user-attachments/assets/0c498b02-6086-4362-b588-b3f072e90592)
+
 
 ## 🕹️ Features
 
@@ -38,6 +39,7 @@ Open the project in your preferred Java IDE
 
 Set Game.java as the main class
 
+```
 Run the project
 
 🧱 Project Structure
@@ -55,22 +57,8 @@ Java-Plane-Bullet-Game/
 │   ├── plane.png
 │   ├── bullet.png
 │   └── enemy.png
-📸 Screenshots
-Gameplay	Plane vs Enemies
 
-📦 Packaging to JAR
-To create a runnable JAR:
 
-bash
-Copy
-Edit
-jar cfe PlaneGame.jar Game -C out .
-Then run with:
-
-bash
-Copy
-Edit
-java -jar PlaneGame.jar
 📝 License
 This project is licensed under the MIT License - feel free to use and modify!
 
